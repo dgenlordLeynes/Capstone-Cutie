@@ -548,10 +548,11 @@ class FifthScreen(Screen):
                              font_size='20sp', background_normal='', background_color=(0.2, 0.2, 0.2, 0.5))  # 50% opacity
         back_button.bind(on_press=self.go_back)
 
-        self.progress = Label(text='2/10', font_size='20sp', color=(0, 0, 0, 1))
+        # Progress label with adjusted position
+        self.progress = Label(text='2/10', font_size='20sp', color=(0, 0, 0, 1), pos_hint={'center_x': 0.5, 'top': 0.3})
 
         # Creating the score layout with labels
-        self.score_layout = BoxLayout(orientation='vertical', size_hint=(None, None), size=(100, 60), pos_hint={'right': 1, 'top': 0.25}, )
+        self.score_layout = BoxLayout(orientation='vertical', size_hint=(None, None), size=(100, 60), pos_hint={'right': 1, 'top': 0.25})
 
         # Small label for score text
         self.score_text = Label(text='Score:', font_size='12sp', color=(0, 0, 0, 1), size_hint=(1, None), height=20)
@@ -571,8 +572,8 @@ class FifthScreen(Screen):
         self.layout.add_widget(top_bar)
 
         # Draw rounded rectangle for score background with 50% opacity
-        with self.canvas.before:
-            Color(0.2, 0.2, 0.2, 0.5)  # White color with 50% opacity for the score background
+        with self.canvas.after:
+            Color(0.2, 0.2, 0.2, 0.5)  # Dark color with 50% opacity for the score background
             self.score_background = RoundedRectangle(size=self.score_layout.size, pos=self.score_layout.pos)
 
         # Word label
@@ -601,8 +602,8 @@ class FifthScreen(Screen):
         # Add the answer layout to the main layout
         self.layout.add_widget(self.answer_layout)
 
-        # Done button at the bottom
-        self.done_button = Button(text='Done', size_hint=(0.4, 0.1), pos_hint={'center_x': 0.5, 'y': 0.1}, font_size='20sp', 
+        # Smaller, rectangular Done button
+        self.done_button = Button(text='Done', size_hint=(None, None), size=(300, 40), pos_hint={'center_x': 0.5, 'y': 0.1}, font_size='18sp', 
                                   background_normal='', background_color=(0.2, 0.2, 0.2, 1))
         self.layout.add_widget(self.done_button)
 
@@ -630,6 +631,7 @@ class FifthScreen(Screen):
         # Ensure the background updates correctly on size change
         self.update_word_background()
         self.update_score_background()
+
 
 
 class MyApp(App):
