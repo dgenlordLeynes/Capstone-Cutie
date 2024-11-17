@@ -14,7 +14,21 @@ from kivy.uix.stencilview import StencilView
 from kivy.graphics import Color, RoundedRectangle
 from kivy.uix.boxlayout import BoxLayout
 
+class RoundedButton(Button):
+    def __init__(self, color=(0.2, 0.2, 0.2, 1), radius=[20], **kwargs):
+        super(RoundedButton, self).__init__(**kwargs)
+        self.background_normal = ''
+        self.background_color = (0, 0, 0, 0)
 
+        with self.canvas.before:
+            Color(*color) 
+            self.rect = RoundedRectangle(size=self.size, pos=self.pos, radius=radius)
+
+        self.bind(size=self.update_rect, pos=self.update_rect)
+
+    def update_rect(self, *args):
+        self.rect.pos = self.pos
+        self.rect.size = self.size
 
 
 Window.size = (400, 700)
@@ -59,7 +73,7 @@ class MainScreen(Screen):
         )
         self.add_widget(self.text2)
 
-        self.button = Button(
+        self.button = RoundedButton(
             text='Continue',
             font_size='12sp',
             size_hint=(None, None),
@@ -128,13 +142,14 @@ class SecondScreen(Screen):
 
         button_layout = FloatLayout(size_hint=(0.8, 0.2), pos_hint={'center_x': 0.5, 'center_y': 0.75})
 
-        button1 = Button(
+        button1 = RoundedButton(
             text='Bikol',
             size_hint=(0.4, 0.3),
             font_size='15sp',
             pos_hint={'right': 1.0, 'center_y': 0.5},
             background_color=(0.2, 0.2, 0.2, 1),
-            font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf'
+            font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf',
+            radius=[15]
         )
         button_layout.add_widget(button1)
 
@@ -167,13 +182,14 @@ class SecondScreen(Screen):
 
         button_layout.add_widget(circle_button)
 
-        button2 = Button(
+        button2 = RoundedButton(
             text='Tagalog',
             size_hint=(0.4, 0.3),
             font_size='15sp',
             pos_hint={'right': 0.4, 'center_y': 0.5},
             background_color=(0.2, 0.2, 0.2, 1),
-            font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf'
+            font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf',
+            radius=[15]
         )
         button_layout.add_widget(button2)
 
@@ -181,29 +197,32 @@ class SecondScreen(Screen):
 
         bottom_button_layout = FloatLayout(size_hint=(1, 0.1), pos_hint={'center_x': 0.5, 'y': 0.02})
 
-        square_button1 = Button(
+        square_button1 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
             pos_hint={'center_x': 0.25, 'center_y': 0.5},
-            background_color=(0.2, 0.2, 0.2, 1)
+            background_color=(0.2, 0.2, 0.2, 1),
+            radius=[100]
         )
         square_button1.bind(on_press=self.go_to_fourth_screen)
         bottom_button_layout.add_widget(square_button1)
 
-        square_button2 = Button(
+        square_button2 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
             pos_hint={'center_x': 0.5, 'center_y': 0.5},
-            background_color=(0.2, 0.2, 0.2, 1)
+            background_color=(0.2, 0.2, 0.2, 1),
+            radius=[100]
         )
         square_button2.bind(on_press=lambda x: print("Square button 2 pressed!"))
         bottom_button_layout.add_widget(square_button2)
 
-        square_button3 = Button(
+        square_button3 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
             pos_hint={'center_x': 0.75, 'center_y': 0.5},
-            background_color=(0.2, 0.2, 0.2, 1)
+            background_color=(0.2, 0.2, 0.2, 1),
+            radius=[100]
         )
         square_button3.bind(on_press=self.go_to_third_screen)
         bottom_button_layout.add_widget(square_button3)
@@ -227,7 +246,7 @@ class SecondScreen(Screen):
             pos_hint={'center_x': 0.5, 'center_y': 0.33},
             multiline=True,
             readonly=True, 
-            background_color=(1, 1, 1, 1) 
+            background_color=(1, 1, 1, 1), 
         )
         layout.add_widget(self.text_input2)
 
@@ -345,29 +364,32 @@ class ThirdScreen(Screen):
 
         bottom_button_layout = FloatLayout(size_hint=(1, 0.1), pos_hint={'center_x': 0.5, 'y': 0.02})
 
-        square_button1 = Button(
+        square_button1 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
             pos_hint={'center_x': 0.25, 'center_y': 0.5},
-            background_color=(0.2, 0.2, 0.2, 1)
+            background_color=(0.2, 0.2, 0.2, 1),
+            radius=[100]
         )
         square_button1.bind(on_press=self.go_to_fourth_screen)
         bottom_button_layout.add_widget(square_button1)
 
-        square_button2 = Button(
+        square_button2 = RoundedButton(
         size_hint=(None, None),
         size=(50, 50),
         pos_hint={'center_x': 0.5, 'center_y': 0.5},
-        background_color=(0.2, 0.2, 0.2, 1)
+        background_color=(0.2, 0.2, 0.2, 1),
+        radius=[100]
         )
         square_button2.bind(on_press=self.go_to_second_screen)
         bottom_button_layout.add_widget(square_button2)
 
-        square_button3 = Button(
+        square_button3 = RoundedButton(
         size_hint=(None, None),
         size=(50, 50),
         pos_hint={'center_x': 0.75, 'center_y': 0.5},
-        background_color=(0.2, 0.2, 0.2, 1)
+        background_color=(0.2, 0.2, 0.2, 1),
+        radius=[100]
         )
         square_button3.bind(on_press=lambda x: print("Square button 3 pressed!"))
         bottom_button_layout.add_widget(square_button3)
@@ -436,13 +458,14 @@ class FourthScreen(Screen):
         layout.add_widget(title)
 
         # Start Playing Button (lower on the screen with more space above)
-        start_button = Button(
+        start_button = RoundedButton(
             text='Start Playing',
             font_size='18sp',
             size_hint=(0.4, 0.08),  # Reduced size
             pos_hint={'center_x': 0.5, 'center_y': 0.2},  # Positioned lower on the screen
             background_color=(0.2, 0.2, 0.2, 1),
-            font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf'
+            font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf',
+            radius=[10]
         )
         start_button.bind(on_press=self.go_to_fifth_screen)
         layout.add_widget(start_button)
@@ -460,29 +483,32 @@ class FourthScreen(Screen):
         # Footer with the three square buttons
         bottom_button_layout = FloatLayout(size_hint=(1, 0.1), pos_hint={'center_x': 0.5, 'y': 0.02})
 
-        square_button1 = Button(
+        square_button1 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
             pos_hint={'center_x': 0.25, 'center_y': 0.5},
-            background_color=(0.2, 0.2, 0.2, 1)
+            background_color=(0.2, 0.2, 0.2, 1),
+            radius=[100]
         )
         square_button1.bind(on_press=lambda x: print("Square button 1 pressed!"))
         bottom_button_layout.add_widget(square_button1)
 
-        square_button2 = Button(
+        square_button2 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
             pos_hint={'center_x': 0.5, 'center_y': 0.5},
-            background_color=(0.2, 0.2, 0.2, 1)
+            background_color=(0.2, 0.2, 0.2, 1),
+            radius=[100]
         )
         square_button2.bind(on_press=self.go_to_second_screen)
         bottom_button_layout.add_widget(square_button2)
 
-        square_button3 = Button(
+        square_button3 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
             pos_hint={'center_x': 0.75, 'center_y': 0.5},
-            background_color=(0.2, 0.2, 0.2, 1)
+            background_color=(0.2, 0.2, 0.2, 1),
+            radius=[100]
         )
         square_button3.bind(on_press=self.go_to_third_screen)
         bottom_button_layout.add_widget(square_button3)
@@ -543,7 +569,7 @@ class FifthScreen(Screen):
         top_bar = BoxLayout(orientation='horizontal', size_hint=(1, 0.1), pos_hint={'top': 1})
 
         # Back button positioned in line with the progress label
-        back_button = Button(text='Back', size_hint=(None, None), size=(100, 50),
+        back_button = RoundedButton(text='Back', size_hint=(None, None), size=(100, 50),
                              pos_hint={'x': 0.05, 'top': 0.15},
                              font_size='20sp', background_normal='', background_color=(0.2, 0.2, 0.2, 0.5))  # 50% opacity
         back_button.bind(on_press=self.go_back)
@@ -595,15 +621,15 @@ class FifthScreen(Screen):
 
         answer_texts = ['magaling', 'maama', 'maganda']
         for text in answer_texts:
-            answer_button = Button(text=text, font_size='20sp', background_normal='', 
-                                   background_color=(1, 1, 1, 1), color=(0.2, 0.2, 0.2, 1), size_hint_y=None, height=40)
+            answer_button = RoundedButton(text=text, font_size='20sp', background_normal='', 
+                                   background_color=(1, 1, 1, 1), color=(0.2, 0.2, 0.2, 1), size_hint_y=None, height=40, radius=[10])
             self.answer_layout.add_widget(answer_button)
 
         # Add the answer layout to the main layout
         self.layout.add_widget(self.answer_layout)
 
         # Smaller, rectangular Done button
-        self.done_button = Button(text='Done', size_hint=(None, None), size=(300, 40), pos_hint={'center_x': 0.5, 'y': 0.1}, font_size='18sp', 
+        self.done_button = RoundedButton(text='Done', size_hint=(None, None), size=(300, 40), pos_hint={'center_x': 0.5, 'y': 0.1}, font_size='18sp', 
                                   background_normal='', background_color=(0.2, 0.2, 0.2, 1))
         self.layout.add_widget(self.done_button)
 
