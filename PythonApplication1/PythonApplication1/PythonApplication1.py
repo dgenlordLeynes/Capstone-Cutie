@@ -30,6 +30,24 @@ class RoundedButton(Button):
         self.rect.pos = self.pos
         self.rect.size = self.size
 
+class RoundedTextInput(TextInput):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.background_color = (0, 0, 0, 0)
+        self.foreground_color = (0, 0, 0, 1)
+
+        self.padding = [20, 10] 
+
+        with self.canvas.before:
+            Color(1, 1, 1, 1)
+            self.rect = RoundedRectangle(size=self.size, pos=self.pos, radius=[10])
+
+        self.bind(pos=self.update_rect, size=self.update_rect)
+
+    def update_rect(self, *args):
+        self.rect.pos = self.pos
+        self.rect.size = self.size
+
 
 Window.size = (400, 700)
 
@@ -229,24 +247,23 @@ class SecondScreen(Screen):
 
         layout.add_widget(bottom_button_layout)
 
-        self.text_input1 = TextInput(
+        self.text_input1 = RoundedTextInput(
             hint_text='Enter your text here...',
             size_hint=(0.8, 0.2),
             font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf',
             pos_hint={'center_x': 0.5, 'center_y': 0.57},
             multiline=False
         )
-        self.text_input1.bind(on_text_validate=self.update_textbox2)  
         layout.add_widget(self.text_input1)
 
-        self.text_input2 = TextInput(
+        self.text_input2 = RoundedTextInput(
             hint_text='Your input will be here...',
             size_hint=(0.8, 0.2),
             font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf',
             pos_hint={'center_x': 0.5, 'center_y': 0.33},
             multiline=True,
             readonly=True, 
-            background_color=(1, 1, 1, 1), 
+            background_color=(1, 1, 1, 1) 
         )
         layout.add_widget(self.text_input2)
 
@@ -302,7 +319,7 @@ class ThirdScreen(Screen):
                                      pos_hint={'center_x': 0.5, 'center_y': 0.5})
 
         def create_button_with_subtext(main_text, sub_text, pos_hint, icon_source):
-            box = BoxLayout(orientation='horizontal', size_hint=(None, None), size=(250, 100), spacing=10)
+            box = BoxLayout(orientation='horizontal', size_hint=(None, None), size=(250, 100), spacing=10,)
             
             icon = Image(source=icon_source, size_hint=(None, None), size=(40, 40), allow_stretch=True, keep_ratio=True)
             icon.size_hint_y = 0.6
