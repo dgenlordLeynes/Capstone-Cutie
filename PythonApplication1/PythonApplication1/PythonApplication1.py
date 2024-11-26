@@ -13,6 +13,7 @@ from kivy.core.image import Image as CoreImage
 from kivy.uix.stencilview import StencilView
 from kivy.graphics import Color, RoundedRectangle
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.behaviors import ButtonBehavior
 
 class RoundedButton(Button):
     def __init__(self, color=(0.2, 0.2, 0.2, 1), radius=[20], **kwargs):
@@ -48,7 +49,30 @@ class RoundedTextInput(TextInput):
         self.rect.pos = self.pos
         self.rect.size = self.size
 
+class CustomRoundedButton(Button):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.background_normal = ''
+        self.background_down = ''
+        self.border = (0, 0, 0, 0)
 
+class IconButton(ButtonBehavior, Image):
+    pass
+
+
+class MyWidget(FloatLayout):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        # Create the bottom layout with rounded rectangle background
+        with self.canvas.before:
+            Color(0.2, 0.2, 0.2, 1)  # Set background color for the bottom layout (dark gray)
+            self.background_rect = RoundedRectangle(
+                size=(self.width * 0.9, self.height * 0.1),  # Adjust the size of the rounded rectangle
+                pos=(self.center_x - (self.width * 0.9) / 2, self.height * 0.02),  # Position it near the bottom
+                radius=[20]  # Rounded corners
+            )
+            
 Window.size = (400, 700)
 
 class MainScreen(Screen):
@@ -131,28 +155,52 @@ class MainScreen(Screen):
         self.rect.size = self.size
 
 
+from kivy.uix.button import Button
+from kivy.uix.image import Image
+from kivy.uix.floatlayout import FloatLayout
+from kivy.graphics import Color, Rectangle
+from kivy.uix.label import Label
+
 class SecondScreen(Screen):
     def __init__(self, **kwargs):
         super(SecondScreen, self).__init__(**kwargs)
 
+        # Background color for the entire screen
         with self.canvas.before:
             Color(0.976, 0.875, 0.427, 1)
             self.rect = Rectangle(size=self.size, pos=self.pos)
-
         self.bind(size=self._update_rect, pos=self._update_rect)
 
+        # Main layout
         layout = FloatLayout()
 
-        label = Label(
+        # Top Title and Back Button Layout
+        top_layout = FloatLayout(size_hint=(1, 0.1), pos_hint={'top': 1})
+
+        # Back button to return to MainScreen
+        back_button = IconButton(
+            source='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/back.png',
+            size_hint=(0.1, 0.5),
+            pos_hint={'x': 0.02, 'center_y': 0.5}
+        )
+        back_button.bind(on_release=self.go_to_main_screen)
+        top_layout.add_widget(back_button)
+
+        # Title label (centered)
+        title_label = Label(
             text='Dialecto',
-            size_hint=(0.5, 0.1),
-            pos_hint={'center_x': 0.5, 'center_y': 0.9},
             font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-ExtraBold.ttf',
             color=(0.2, 0.2, 0.2, 1),
-            font_size='24sp'
+            font_size='24sp',
+            size_hint=(0.5, 1),
+            pos_hint={'center_x': 0.5, 'center_y': 0.5}
         )
-        layout.add_widget(label)
+        top_layout.add_widget(title_label)
 
+        # Add top layout to main layout
+        layout.add_widget(top_layout)
+
+        # Add your layout for buttons and text inputs
         with layout.canvas.before:
             Color(1, 1, 1, 1)
             button_height = 0.5 * self.height
@@ -179,22 +227,22 @@ class SecondScreen(Screen):
         button_layout.add_widget(icon_image)
 
         circle_button = Button(
-           size_hint=(0.4, 0.3),
-           size=(20, 20),
-           pos_hint={'center_x': 0.5, 'center_y': 0.5},
-           background_color=(1, 1, 1, 0) 
+            size_hint=(0.4, 0.3),
+            size=(20, 20),
+            pos_hint={'center_x': 0.5, 'center_y': 0.5},
+            background_color=(1, 1, 1, 0)
         )
 
         circle_button.bind(on_press=lambda x: print("Circle button pressed!"))
 
         def swap_button_texts(instance):
-           temp_text = button1.text
-           button1.text = button2.text
-           button2.text = temp_text
+            temp_text = button1.text
+            button1.text = button2.text
+            button2.text = temp_text
 
-           temp_input_text = self.text_input1.text
-           self.text_input1.text = self.text_input2.text
-           self.text_input2.text = temp_input_text
+            temp_input_text = self.text_input1.text
+            self.text_input1.text = self.text_input2.text
+            self.text_input2.text = temp_input_text
 
         circle_button.bind(on_press=swap_button_texts)
 
@@ -269,19 +317,21 @@ class SecondScreen(Screen):
 
         self.add_widget(layout)
 
-    def update_textbox2(self, instance):
-        self.text_input2.text = '[Testing]Marhay na aga. Anong pangaran mo? Kaogmahan kong makabisto ka. Namomotan ta ka!'
-        self.text_input1.text = '[Testing]Magandang umaga. Anong pangalan mo? Natutuwa akong makilala ka. Mahal kita!'
-
-    def _update_rect(self, instance, value):
-        self.rect.pos = self.pos
-        self.rect.size = self.size
+    def go_to_main_screen(self, instance):
+        # Switch back to MainScreen
+        self.manager.current = 'main'
 
     def go_to_fourth_screen(self, instance):
         self.manager.current = 'fourth'
 
     def go_to_third_screen(self, instance):
         self.manager.current = 'third'
+
+    def _update_rect(self, instance, value):
+        # Update background rectangle when the screen resizes
+        self.rect.pos = self.pos
+        self.rect.size = self.size
+
 
 class ThirdScreen(Screen):
     def __init__(self, **kwargs):
@@ -574,7 +624,7 @@ class FifthScreen(Screen):
         # Set the background color
         with self.canvas.before:
             Color(0.976, 0.875, 0.427, 1)  # Original soft yellow background color
-            self.rect = RoundedRectangle(size=self.size, pos=self.pos)
+            self.rect = Rectangle(size=self.size, pos=self.pos)
 
         self.bind(size=self._update_rect, pos=self._update_rect)
 
