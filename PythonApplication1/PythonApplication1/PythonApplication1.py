@@ -154,13 +154,6 @@ class MainScreen(Screen):
         self.rect.pos = self.pos
         self.rect.size = self.size
 
-
-from kivy.uix.button import Button
-from kivy.uix.image import Image
-from kivy.uix.floatlayout import FloatLayout
-from kivy.graphics import Color, Rectangle
-from kivy.uix.label import Label
-
 class SecondScreen(Screen):
     def __init__(self, **kwargs):
         super(SecondScreen, self).__init__(**kwargs)
@@ -204,7 +197,7 @@ class SecondScreen(Screen):
         with layout.canvas.before:
             Color(1, 1, 1, 1)
             button_height = 0.5 * self.height
-            self.white_box = Rectangle(size=(3.39 * self.width, button_height + 0.1 * self.height), pos=(0.3 * self.width, 4.95 * self.height))
+            self.white_box = RoundedRectangle(size=(3.39 * self.width, button_height + 0.1 * self.height), pos=(0.3 * self.width, 4.95 * self.height))
 
         button_layout = FloatLayout(size_hint=(0.8, 0.2), pos_hint={'center_x': 0.5, 'center_y': 0.75})
 
