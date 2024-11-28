@@ -11,7 +11,7 @@ from kivy.uix.switch import Switch
 from kivy.uix.boxlayout import BoxLayout
 from kivy.core.image import Image as CoreImage
 from kivy.uix.stencilview import StencilView
-from kivy.graphics import Color, RoundedRectangle
+from kivy.graphics import RoundedRectangle, Color
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
 
@@ -34,18 +34,20 @@ class RoundedButton(Button):
 class RoundedTextInput(TextInput):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.background_color = (0, 0, 0, 0)
-        self.foreground_color = (0, 0, 0, 1)
 
-        self.padding = [20, 10] 
+        # Ensure background is not transparent
+        self.background_normal = ''  # Disable the default background image
+        self.background_active = ''  # Disable the active background image
 
+        # Set rounded rectangle background
         with self.canvas.before:
-            Color(1, 1, 1, 1)
-            self.rect = RoundedRectangle(size=self.size, pos=self.pos, radius=[10])
+            Color(1, 1, 1, 1)  # Set background color to white
+            self.rect = RoundedRectangle(size=self.size, pos=self.pos, radius=[15])
 
-        self.bind(pos=self.update_rect, size=self.update_rect)
+        self.bind(size=self._update_rect, pos=self._update_rect)
 
-    def update_rect(self, *args):
+    def _update_rect(self, instance, value):
+        # Update rectangle size and position when the widget is resized
         self.rect.pos = self.pos
         self.rect.size = self.size
 
@@ -158,7 +160,7 @@ class SecondScreen(Screen):
     def __init__(self, **kwargs):
         super(SecondScreen, self).__init__(**kwargs)
 
-        # Background color for the entire screen
+          # Main layout for the entire screen
         with self.canvas.before:
             Color(0.976, 0.875, 0.427, 1)
             self.rect = Rectangle(size=self.size, pos=self.pos)
@@ -193,14 +195,16 @@ class SecondScreen(Screen):
         # Add top layout to main layout
         layout.add_widget(top_layout)
 
-        # Add your layout for buttons and text inputs
+        # Add white box for buttons
         with layout.canvas.before:
-            Color(1, 1, 1, 1)
+            Color(1, 1, 1, 1)  # White color
             button_height = 0.5 * self.height
             self.white_box = RoundedRectangle(size=(3.39 * self.width, button_height + 0.1 * self.height), pos=(0.3 * self.width, 4.95 * self.height))
 
+        # Button layout
         button_layout = FloatLayout(size_hint=(0.8, 0.2), pos_hint={'center_x': 0.5, 'center_y': 0.75})
 
+        # Button 1 (Bikol)
         button1 = RoundedButton(
             text='Bikol',
             size_hint=(0.4, 0.3),
@@ -212,6 +216,7 @@ class SecondScreen(Screen):
         )
         button_layout.add_widget(button1)
 
+        # Icon image
         icon_image = Image(
             source='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/switch.png',
             size_hint=(0.15, 0.15),
@@ -219,13 +224,13 @@ class SecondScreen(Screen):
         )
         button_layout.add_widget(icon_image)
 
+        # Circle button
         circle_button = Button(
             size_hint=(0.4, 0.3),
             size=(20, 20),
             pos_hint={'center_x': 0.5, 'center_y': 0.5},
             background_color=(1, 1, 1, 0)
         )
-
         circle_button.bind(on_press=lambda x: print("Circle button pressed!"))
 
         def swap_button_texts(instance):
@@ -238,9 +243,9 @@ class SecondScreen(Screen):
             self.text_input2.text = temp_input_text
 
         circle_button.bind(on_press=swap_button_texts)
-
         button_layout.add_widget(circle_button)
 
+        # Button 2 (Tagalog)
         button2 = RoundedButton(
             text='Tagalog',
             size_hint=(0.4, 0.3),
@@ -254,7 +259,19 @@ class SecondScreen(Screen):
 
         layout.add_widget(button_layout)
 
-        bottom_button_layout = FloatLayout(size_hint=(1, 0.1), pos_hint={'center_x': 0.5, 'y': 0.02})
+        with layout.canvas.before:
+            Color(1, 1, 1, 1)
+            bottom_rect_height = 0.1 * self.height
+            self.bottom_rect = RoundedRectangle(
+                size=(self.width, bottom_rect_height),
+                pos=(0, 0)  # Bottom left corner
+            )
+
+        # Bind size and position to update when the screen is resized
+        layout.bind(size=self._update_bottom_rect, pos=self._update_bottom_rect)
+
+        # Bottom button layout (inside the rectangle)
+        bottom_button_layout = FloatLayout(size_hint=(1, 0.1), pos_hint={'y': 0.02})
 
         square_button1 = RoundedButton(
             size_hint=(None, None),
@@ -288,6 +305,7 @@ class SecondScreen(Screen):
 
         layout.add_widget(bottom_button_layout)
 
+        # Text Inputs
         self.text_input1 = RoundedTextInput(
             hint_text='Enter your text here...',
             size_hint=(0.8, 0.2),
@@ -303,15 +321,15 @@ class SecondScreen(Screen):
             font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf',
             pos_hint={'center_x': 0.5, 'center_y': 0.33},
             multiline=True,
-            readonly=True, 
-            background_color=(1, 1, 1, 1) 
+            readonly=True,
+            background_color=(1, 1, 1, 1)
         )
+
         layout.add_widget(self.text_input2)
 
         self.add_widget(layout)
 
     def go_to_main_screen(self, instance):
-        # Switch back to MainScreen
         self.manager.current = 'main'
 
     def go_to_fourth_screen(self, instance):
@@ -321,11 +339,13 @@ class SecondScreen(Screen):
         self.manager.current = 'third'
 
     def _update_rect(self, instance, value):
-        # Update background rectangle when the screen resizes
         self.rect.pos = self.pos
         self.rect.size = self.size
 
-
+    def _update_bottom_rect(self, instance, value):
+        # Update bottom button background rectangle when the screen resizes
+        self.bottom_rect.pos = (0, 0)  # Bottom left corner
+        self.bottom_rect.size = (self.width, 0.1 * self.height)  # Adjust height relative to screen size
 class ThirdScreen(Screen):
     def __init__(self, **kwargs):
         super(ThirdScreen, self).__init__(**kwargs)
@@ -353,7 +373,7 @@ class ThirdScreen(Screen):
         # Create the white box
         with self.canvas:
             Color(1, 1, 1, 1)
-            self.white_box = Rectangle(size=(self.width * 0.8, self.height * 0.6),
+            self.white_box = RoundedRectangle(size=(self.width * 0.8, self.height * 0.6),
                                        pos=(self.center_x - (self.width * 0.8) / 2, 
                                             self.center_y - (self.height * 0.6) / 2))
 
