@@ -3,7 +3,7 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.core.image import Image as CoreImage
-
+from kivy.properties import ListProperty
 from kivy.uix.image import Image
 from kivy.core.window import Window
 from kivy.graphics import Color, Rectangle
@@ -34,24 +34,41 @@ class RoundedButton(Button):
         self.rect.size = self.size
 
 class RoundedTextInput(TextInput):
+    # Properties for the radius of rounded corners and background color
+    radius = ListProperty([10, 10, 10, 10])  
+    background_color = ListProperty([1, 1, 1, 1])  # Default white color for the background
+
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-        # Ensure background is not transparent
-        self.background_normal = ''  # Disable the default background image
-        self.background_active = ''  # Disable the active background image
-
-        # Set rounded rectangle background
+        super(RoundedTextInput, self).__init__(**kwargs)
+        # Bind size and position changes to update the background
+        self.bind(size=self.update_canvas, pos=self.update_canvas)
+        
+    def update_canvas(self, *args):
+        # Clear the previous canvas drawing before rendering a new one
+        self.canvas.before.clear()
+        
         with self.canvas.before:
-            Color(1, 1, 1, 1)  # Set background color to white
-            self.rect = RoundedRectangle(size=self.size, pos=self.pos, radius=[15])
+            # Draw the rounded rectangle as the background
+            from kivy.graphics import Color
+            Color(*self.background_color)  # Set the background color
+            # Draw the rounded rectangle based on the size and position of the TextInput
+            self.rounded_rect = RoundedRectangle(
+                size=self.size, 
+                pos=self.pos, 
+                radius=self.radius
+            )
 
-        self.bind(size=self._update_rect, pos=self._update_rect)
+    def on_focus(self, instance, value):
+        # Update the canvas when the input is focused or unfocused
+        self.update_canvas()
 
-    def _update_rect(self, instance, value):
-        # Update rectangle size and position when the widget is resized
-        self.rect.pos = self.pos
-        self.rect.size = self.size
+    def on_focus(self, instance, value):
+        # Redraw the background when the input is focused or unfocused
+        self.update_canvas()
+
+    def on_text(self, instance, value):
+        # Trigger canvas update when text is entered or removed
+        self.update_canvas()
 
 class CustomRoundedButton(Button):
     def __init__(self, **kwargs):
@@ -307,27 +324,32 @@ class SecondScreen(Screen):
 
         layout.add_widget(bottom_button_layout)
 
-        # Text Inputs
+      # Text input 1
         self.text_input1 = RoundedTextInput(
-            hint_text='Enter your text here...',
-            size_hint=(0.8, 0.2),
-            font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf',
-            pos_hint={'center_x': 0.5, 'center_y': 0.57},
-            multiline=False
+        hint_text='Enter your text here...',  # Hint text will be visible now
+        size_hint=(0.8, 0.2),
+        font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf',
+        pos_hint={'center_x': 0.5, 'center_y': 0.57},
+        multiline=False,
+        background_color=(1, 1, 1, 1),  # White background for the text input
+        radius=[15, 15, 15, 15]  # Rounded corners
         )
         layout.add_widget(self.text_input1)
 
+# Text input 2
         self.text_input2 = RoundedTextInput(
-            hint_text='Your input will be here...',
-            size_hint=(0.8, 0.2),
-            font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf',
-            pos_hint={'center_x': 0.5, 'center_y': 0.33},
-            multiline=True,
-            readonly=True,
-            background_color=(1, 1, 1, 1)
+        hint_text='Your input will be here...',  # Hint text will be visible now
+        size_hint=(0.8, 0.2),
+        font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf',
+        pos_hint={'center_x': 0.5, 'center_y': 0.33},
+        multiline=True,
+        readonly=True,
+        background_color=(1, 1, 1, 1),  # White background
+        radius=[15, 15, 15, 15]  # Rounded corners
         )
-
         layout.add_widget(self.text_input2)
+        
+
 
         self.add_widget(layout)
 
