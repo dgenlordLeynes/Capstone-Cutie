@@ -2,6 +2,8 @@ from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+from kivy.core.image import Image as CoreImage
+
 from kivy.uix.image import Image
 from kivy.core.window import Window
 from kivy.graphics import Color, Rectangle
@@ -667,111 +669,111 @@ class FifthScreen(Screen):
     def __init__(self, **kwargs):
         super(FifthScreen, self).__init__(**kwargs)
 
-        # Set the background color
+        # Set background color first to ensure it is at the base layer
         with self.canvas.before:
-            Color(0.976, 0.875, 0.427, 1)  # Original soft yellow background color
-            self.rect = Rectangle(size=self.size, pos=self.pos)
-
+            Color(0.976, 0.875, 0.427, 1)  # Yellow background color
+            self.bg_rect = Rectangle(size=self.size, pos=self.pos)
         self.bind(size=self._update_rect, pos=self._update_rect)
 
-        # Main layout using FloatLayout for precise positioning
+        # Attempt to load the background image
+        try:
+            self.bg_image = CoreImage('C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/white circle.png').texture
+        except Exception as e:
+            print(f"Error loading background image: {e}")
+            self.bg_image = None  # Fallback in case of error
+        
+        # If image is available, add it on top of the yellow background
+        if self.bg_image:
+            with self.canvas.before:
+                Color(1, 1, 1, 1)  # White color for the image
+                self.bg_image_rect = Rectangle(texture=self.bg_image, size=self.size, pos=self.pos)
+            self.bind(size=self._update_rect, pos=self._update_rect)
+
+        # Main layout using FloatLayout
         self.layout = FloatLayout()
         self.add_widget(self.layout)
 
         # Top bar with progress and score
         top_bar = BoxLayout(orientation='horizontal', size_hint=(1, 0.1), pos_hint={'top': 1})
 
-        # Back button positioned in line with the progress label
+        # Back button
         back_button = RoundedButton(text='Back', size_hint=(None, None), size=(100, 50),
-                             pos_hint={'x': 0.05, 'top': 0.15},
-                             font_size='20sp', background_normal='', background_color=(0.2, 0.2, 0.2, 0.5))  # 50% opacity
+                                     pos_hint={'x': 0.05, 'top': 0.15}, font_size='20sp', background_normal='', background_color=(0.2, 0.2, 0.2, 0.5))
         back_button.bind(on_press=self.go_back)
 
-        # Progress label with adjusted position
+        # Progress label
         self.progress = Label(text='2/10', font_size='20sp', color=(0, 0, 0, 1), pos_hint={'center_x': 0.5, 'top': 0.3})
 
-        # Creating the score layout with labels
+        # Score layout
         self.score_layout = BoxLayout(orientation='vertical', size_hint=(None, None), size=(100, 60), pos_hint={'right': 1, 'top': 0.25})
-
-        # Small label for score text
         self.score_text = Label(text='Score:', font_size='12sp', color=(0, 0, 0, 1), size_hint=(1, None), height=20)
-        # Large label for score value
         self.score_value = Label(text='87', font_size='24sp', color=(0, 0, 0, 1), size_hint=(1, None), height=40)
-
-        # Add labels to the score layout
         self.score_layout.add_widget(self.score_text)
         self.score_layout.add_widget(self.score_value)
 
-        # Add the score layout to the top bar
-        top_bar.add_widget(back_button)  # Add back button first
-        top_bar.add_widget(self.progress)  # Add progress label
-        top_bar.add_widget(self.score_layout)  # Add score layout
-
-        # Finally add the top bar to your layout
+        # Add components to the top bar
+        top_bar.add_widget(back_button)
+        top_bar.add_widget(self.progress)
+        top_bar.add_widget(self.score_layout)
         self.layout.add_widget(top_bar)
 
-        # Draw rounded rectangle for score background with 50% opacity
-        with self.canvas.after:
-            Color(0.2, 0.2, 0.2, 0.5)  # Dark color with 50% opacity for the score background
-            self.score_background = RoundedRectangle(size=self.score_layout.size, pos=self.score_layout.pos)
+        # Initialize score_background rectangle (for the background of the score layout)
+        with self.canvas.before:
+            self.score_background = Rectangle(size=self.score_layout.size, pos=self.score_layout.pos)
 
-        # Word label
+        # Word label (restored to original rounded rectangle background)
         self.word_label = Label(text='magayon', font_size='30sp', color=(0.2, 0.2, 0.2, 1),
                                 size_hint=(None, None), size=(200, 80), halign='center', valign='middle')
-        self.word_label.bind(size=self.word_label.setter('text_size'))  # Allow text to wrap correctly
-        self.word_label.pos_hint = {'center_x': 0.5, 'center_y': 0.65}
+        self.word_label.bind(size=self.word_label.setter('text_size'))
+        self.word_label.pos_hint = {'center_x': 0.5, 'center_y': 0.70}
         self.layout.add_widget(self.word_label)
 
-        # Adding the rounded rectangle background for the word
+        # Rounded rectangle background for the word label
         with self.canvas.before:
-            Color(1, 1, 1, 1)  # White color for the background
-            self.word_background = RoundedRectangle(size=(self.word_label.width + 100, self.word_label.height + 100),
-                                                    pos=(self.word_label.x - 50, self.word_label.y - 50))  # Centered and bigger
-            self.bind(size=self.update_word_background, pos=self.update_word_background)  # Bind size and position
+            Color(1, 1, 1, 1)  # Slightly translucent background color for the word label
+            self.word_background = RoundedRectangle(size=(self.word_label.width + 40, self.word_label.height + 40),
+                                                    pos=(self.word_label.x - 20, self.word_label.y - 20),
+                                                    radius=[15])
+        
+        self.bind(size=self.update_word_background, pos=self.update_word_background)
 
-        # Answer choices arranged vertically
+        # Answer choices (example with dummy options)
         self.answer_layout = BoxLayout(orientation='vertical', size_hint=(0.8, None), height=150, spacing=10, pos_hint={'center_x': 0.5, 'center_y': 0.4})
-
-        answer_texts = ['magaling', 'maama', 'maganda']
+        answer_texts = ['magaling', 'masama', 'maganda']
         for text in answer_texts:
-            answer_button = RoundedButton(text=text, font_size='20sp', background_normal='', 
-                                   background_color=(1, 1, 1, 1), color=(0.2, 0.2, 0.2, 1), size_hint_y=None, height=40, radius=[10])
+            answer_button = RoundedButton(text=text, font_size='20sp', background_normal='', background_color=(1, 1, 1, 1), 
+                                          color=(0.2, 0.2, 0.2, 1), size_hint_y=None, height=40, radius=[10])
             self.answer_layout.add_widget(answer_button)
-
-        # Add the answer layout to the main layout
         self.layout.add_widget(self.answer_layout)
 
-        # Smaller, rectangular Done button
-        self.done_button = RoundedButton(text='Done', size_hint=(None, None), size=(300, 40), pos_hint={'center_x': 0.5, 'y': 0.1}, font_size='18sp', 
-                                  background_normal='', background_color=(0.2, 0.2, 0.2, 1))
+        # Done button
+        self.done_button = RoundedButton(text='Done', size_hint=(None, None), size=(300, 40), pos_hint={'center_x': 0.5, 'y': 0.1},
+                                         font_size='18sp', background_normal='', background_color=(0.2, 0.2, 0.2, 1))
         self.layout.add_widget(self.done_button)
-
-        # Bind the score layout size change to update the score background
-        self.score_layout.bind(size=self.update_score_background, pos=self.update_score_background)
 
     def go_back(self, instance):
         self.manager.current = 'fourth'
 
     def _update_rect(self, instance, value):
-        self.rect.pos = self.pos
-        self.rect.size = self.size
+        # Update background rectangle
+        if self.bg_rect:
+            self.bg_rect.pos = self.pos
+            self.bg_rect.size = self.size
+        if self.bg_image_rect:
+            self.bg_image_rect.pos = self.pos
+            self.bg_image_rect.size = self.size
 
     def update_word_background(self, *args):
-        # Update the background for the word label
-        self.word_background.size = (self.word_label.width + 100, self.word_label.height + 100)  # Bigger
-        self.word_background.pos = (self.word_label.x - 50, self.word_label.y - 50)  # Centered
+        # Update the word background rectangle with the new size and position
+        if self.word_background:
+            self.word_background.size = (self.word_label.width + 40, self.word_label.height + 40)
+            self.word_background.pos = (self.word_label.x - 20, self.word_label.y - 20)
 
     def update_score_background(self, *args):
-        # Update the background for the score layout
-        self.score_background.size = self.score_layout.size
-        self.score_background.pos = self.score_layout.pos
-
-    def on_size(self, *args):
-        # Ensure the background updates correctly on size change
-        self.update_word_background()
-        self.update_score_background()
-
-
+        # Update the score layout background
+        if hasattr(self, 'score_background'):
+            self.score_background.size = self.score_layout.size
+            self.score_background.pos = self.score_layout.pos
 
 class MyApp(App):
     def build(self):
