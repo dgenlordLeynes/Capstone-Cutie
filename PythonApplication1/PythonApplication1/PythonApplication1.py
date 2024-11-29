@@ -276,7 +276,7 @@ class SecondScreen(Screen):
         square_button1 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
-            pos_hint={'center_x': 0.25, 'center_y': 0.5},
+            pos_hint={'center_x': 0.25, 'center_y': 0.3},
             background_color=(0.2, 0.2, 0.2, 1),
             radius=[100]
         )
@@ -286,7 +286,7 @@ class SecondScreen(Screen):
         square_button2 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
-            pos_hint={'center_x': 0.5, 'center_y': 0.5},
+            pos_hint={'center_x': 0.5, 'center_y': 0.6},
             background_color=(0.2, 0.2, 0.2, 1),
             radius=[100]
         )
@@ -296,7 +296,7 @@ class SecondScreen(Screen):
         square_button3 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
-            pos_hint={'center_x': 0.75, 'center_y': 0.5},
+            pos_hint={'center_x': 0.75, 'center_y': 0.3},
             background_color=(0.2, 0.2, 0.2, 1),
             radius=[100]
         )
@@ -442,12 +442,24 @@ class ThirdScreen(Screen):
 
         self.add_widget(layout)
 
-        bottom_button_layout = FloatLayout(size_hint=(1, 0.1), pos_hint={'center_x': 0.5, 'y': 0.02})
+        with layout.canvas.before:
+            Color(1, 1, 1, 1)
+            bottom_rect_height = 0.1 * self.height
+            self.bottom_rect = RoundedRectangle(
+                size=(self.width, bottom_rect_height),
+                pos=(0, 0)  # Bottom left corner
+            )
+
+        # Bind size and position to update when the screen is resized
+        layout.bind(size=self._update_bottom_rect, pos=self._update_bottom_rect)
+
+        # Bottom button layout (inside the rectangle)
+        bottom_button_layout = FloatLayout(size_hint=(1, 0.1), pos_hint={'y': 0.02})
 
         square_button1 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
-            pos_hint={'center_x': 0.25, 'center_y': 0.5},
+            pos_hint={'center_x': 0.25, 'center_y': 0.3},
             background_color=(0.2, 0.2, 0.2, 1),
             radius=[100]
         )
@@ -457,7 +469,7 @@ class ThirdScreen(Screen):
         square_button2 = RoundedButton(
         size_hint=(None, None),
         size=(50, 50),
-        pos_hint={'center_x': 0.5, 'center_y': 0.5},
+        pos_hint={'center_x': 0.5, 'center_y': 0.3},
         background_color=(0.2, 0.2, 0.2, 1),
         radius=[100]
         )
@@ -467,7 +479,7 @@ class ThirdScreen(Screen):
         square_button3 = RoundedButton(
         size_hint=(None, None),
         size=(50, 50),
-        pos_hint={'center_x': 0.75, 'center_y': 0.5},
+        pos_hint={'center_x': 0.75, 'center_y': 0.6},
         background_color=(0.2, 0.2, 0.2, 1),
         radius=[100]
         )
@@ -501,6 +513,11 @@ class ThirdScreen(Screen):
 
     def go_to_second_screen(self, instance):
         self.manager.current = 'second'
+
+    def _update_bottom_rect(self, instance, value):
+        # Update bottom button background rectangle when the screen resizes
+        self.bottom_rect.pos = (0, 0)  # Bottom left corner
+        self.bottom_rect.size = (self.width, 0.1 * self.height)  # Adjust height relative to screen size
 
 class FourthScreen(Screen):
     def __init__(self, **kwargs):
@@ -560,13 +577,24 @@ class FourthScreen(Screen):
         )
         layout.add_widget(how_to_play_text)
 
-        # Footer with the three square buttons
-        bottom_button_layout = FloatLayout(size_hint=(1, 0.1), pos_hint={'center_x': 0.5, 'y': 0.02})
+        with layout.canvas.before:
+            Color(1, 1, 1, 1)
+            bottom_rect_height = 0.1 * self.height
+            self.bottom_rect = RoundedRectangle(
+                size=(self.width, bottom_rect_height),
+                pos=(0, 0)  # Bottom left corner
+            )
+
+        # Bind size and position to update when the screen is resized
+        layout.bind(size=self._update_bottom_rect, pos=self._update_bottom_rect)
+
+        # Bottom button layout (inside the rectangle)
+        bottom_button_layout = FloatLayout(size_hint=(1, 0.1), pos_hint={'y': 0.02})
 
         square_button1 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
-            pos_hint={'center_x': 0.25, 'center_y': 0.5},
+            pos_hint={'center_x': 0.25, 'center_y': 0.6},
             background_color=(0.2, 0.2, 0.2, 1),
             radius=[100]
         )
@@ -576,7 +604,7 @@ class FourthScreen(Screen):
         square_button2 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
-            pos_hint={'center_x': 0.5, 'center_y': 0.5},
+            pos_hint={'center_x': 0.5, 'center_y': 0.3},
             background_color=(0.2, 0.2, 0.2, 1),
             radius=[100]
         )
@@ -586,7 +614,7 @@ class FourthScreen(Screen):
         square_button3 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
-            pos_hint={'center_x': 0.75, 'center_y': 0.5},
+            pos_hint={'center_x': 0.75, 'center_y': 0.3},
             background_color=(0.2, 0.2, 0.2, 1),
             radius=[100]
         )
@@ -629,6 +657,11 @@ class FourthScreen(Screen):
 
     def go_to_fifth_screen(self, instance):
         self.manager.current = 'fifth'
+
+    def _update_bottom_rect(self, instance, value):
+        # Update bottom button background rectangle when the screen resizes
+        self.bottom_rect.pos = (0, 0)  # Bottom left corner
+        self.bottom_rect.size = (self.width, 0.1 * self.height)  # Adjust height relative to screen size
 
 class FifthScreen(Screen):
     def __init__(self, **kwargs):
