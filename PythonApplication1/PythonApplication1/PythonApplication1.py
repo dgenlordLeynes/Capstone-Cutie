@@ -36,11 +36,9 @@ class RoundedButton(Button):
 class RoundedTextInput(TextInput):
     # Properties for the radius of rounded corners and background color
     radius = ListProperty([10, 10, 10, 10])  
-    background_color = ListProperty([1, 1, 1, 1])  # Default white color for the background
-
+    background_color = ListProperty([1, 1, 1, 1])  
     def __init__(self, **kwargs):
         super(RoundedTextInput, self).__init__(**kwargs)
-        # Bind size and position changes to update the background
         self.bind(size=self.update_canvas, pos=self.update_canvas)
         
     def update_canvas(self, *args):
@@ -48,9 +46,8 @@ class RoundedTextInput(TextInput):
         self.canvas.before.clear()
         
         with self.canvas.before:
-            # Draw the rounded rectangle as the background
             from kivy.graphics import Color
-            Color(*self.background_color)  # Set the background color
+            Color(*self.background_color) 
             # Draw the rounded rectangle based on the size and position of the TextInput
             self.rounded_rect = RoundedRectangle(
                 size=self.size, 
@@ -87,11 +84,11 @@ class MyWidget(FloatLayout):
 
         # Create the bottom layout with rounded rectangle background
         with self.canvas.before:
-            Color(0.2, 0.2, 0.2, 1)  # Set background color for the bottom layout (dark gray)
+            Color(0.2, 0.2, 0.2, 1) 
             self.background_rect = RoundedRectangle(
-                size=(self.width * 0.9, self.height * 0.1),  # Adjust the size of the rounded rectangle
-                pos=(self.center_x - (self.width * 0.9) / 2, self.height * 0.02),  # Position it near the bottom
-                radius=[20]  # Rounded corners
+                size=(self.width * 0.9, self.height * 0.1),  
+                pos=(self.center_x - (self.width * 0.9) / 2, self.height * 0.02), 
+                radius=[20]  
             )
             
 Window.size = (400, 700)
@@ -200,7 +197,7 @@ class SecondScreen(Screen):
         back_button.bind(on_release=self.go_to_main_screen)
         top_layout.add_widget(back_button)
 
-        # Title label (centered)
+        # Title label 
         title_label = Label(
             text='Dialecto',
             font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-ExtraBold.ttf',
@@ -349,8 +346,6 @@ class SecondScreen(Screen):
         )
         layout.add_widget(self.text_input2)
         
-
-
         self.add_widget(layout)
 
     def go_to_main_screen(self, instance):
@@ -540,21 +535,20 @@ class ThirdScreen(Screen):
 
     def _update_bottom_rect(self, instance, value):
         # Update bottom button background rectangle when the screen resizes
-        self.bottom_rect.pos = (0, 0)  # Bottom left corner
+        self.bottom_rect.pos = (0, 0)  
         self.bottom_rect.size = (self.width, 0.1 * self.height)  # Adjust height relative to screen size
 
 class FourthScreen(Screen):
     def __init__(self, **kwargs):
         super(FourthScreen, self).__init__(**kwargs)
 
-        # Scaling factor for the background image size
-        self.bg_scale_factor = 2  # Increase to make the image appear larger
+        self.bg_scale_factor = 2 
 
         with self.canvas.before:
-            Color(0.976, 0.875, 0.427, 1)  # Background color
+            Color(0.976, 0.875, 0.427, 1)  
             self.rect = Rectangle(size=self.size, pos=self.pos)
 
-            Color(1, 1, 1, 0.25)  # Set 25% opacity for the image
+            Color(1, 1, 1, 0.25)  
             bg_image = CoreImage('C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/philippines map.png')
             self.image_width, self.image_height = bg_image.size
 
@@ -568,22 +562,22 @@ class FourthScreen(Screen):
 
         layout = FloatLayout()
 
-        # Title (placed at the very top)
+        # Title 
         title = Label(
             text='Dialect Challenge',
             font_size='40sp',
-            pos_hint={'center_x': 0.5, 'top': 1.2},  # Positioned at the very top of the screen
+            pos_hint={'center_x': 0.5, 'top': 1.2}, 
             color=(0.2, 0.2, 0.2, 1),
             font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-ExtraBold.ttf'
         )
         layout.add_widget(title)
 
-        # Start Playing Button (lower on the screen with more space above)
+        # Start Playing Button 
         start_button = RoundedButton(
             text='Start Playing',
             font_size='18sp',
-            size_hint=(0.4, 0.08),  # Reduced size
-            pos_hint={'center_x': 0.5, 'center_y': 0.2},  # Positioned lower on the screen
+            size_hint=(0.4, 0.08),  
+            pos_hint={'center_x': 0.5, 'center_y': 0.2},  
             background_color=(0.2, 0.2, 0.2, 1),
             font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf',
             radius=[10]
@@ -591,11 +585,11 @@ class FourthScreen(Screen):
         start_button.bind(on_press=self.go_to_fifth_screen)
         layout.add_widget(start_button)
 
-        # "How to Play?" Text (lower, positioned slightly above "Start Playing" with more space)
+        # "How to Play?" Text 
         how_to_play_text = Label(
             text='How to Play?',
-            font_size='16sp',  # Smaller font size
-            pos_hint={'center_x': 0.5, 'center_y': 0.26},  # Positioned lower with more space
+            font_size='16sp',  
+            pos_hint={'center_x': 0.5, 'center_y': 0.26}, 
             color=(0.2, 0.2, 0.2, 1),
             font_name='C:/Users/Dgenlord Leynes/source/repos/Capstone-Cutie/UIcutie/FONTS/Poppins-Regular.ttf'
         )
@@ -606,7 +600,7 @@ class FourthScreen(Screen):
             bottom_rect_height = 0.1 * self.height
             self.bottom_rect = RoundedRectangle(
                 size=(self.width, bottom_rect_height),
-                pos=(0, 0)  # Bottom left corner
+                pos=(0, 0)  
             )
 
         # Bind size and position to update when the screen is resized
@@ -683,9 +677,8 @@ class FourthScreen(Screen):
         self.manager.current = 'fifth'
 
     def _update_bottom_rect(self, instance, value):
-        # Update bottom button background rectangle when the screen resizes
-        self.bottom_rect.pos = (0, 0)  # Bottom left corner
-        self.bottom_rect.size = (self.width, 0.1 * self.height)  # Adjust height relative to screen size
+        self.bottom_rect.pos = (0, 0)  
+        self.bottom_rect.size = (self.width, 0.1 * self.height)  
 
 class FifthScreen(Screen):
     def __init__(self, **kwargs):
@@ -693,7 +686,7 @@ class FifthScreen(Screen):
 
         # Set background color first to ensure it is at the base layer
         with self.canvas.before:
-            Color(0.976, 0.875, 0.427, 1)  # Yellow background color
+            Color(0.976, 0.875, 0.427, 1)  
             self.bg_rect = Rectangle(size=self.size, pos=self.pos)
         self.bind(size=self._update_rect, pos=self._update_rect)
 
@@ -707,7 +700,7 @@ class FifthScreen(Screen):
         # If image is available, add it on top of the yellow background
         if self.bg_image:
             with self.canvas.before:
-                Color(1, 1, 1, 1)  # White color for the image
+                Color(1, 1, 1, 1)  
                 self.bg_image_rect = Rectangle(texture=self.bg_image, size=self.size, pos=self.pos)
             self.bind(size=self._update_rect, pos=self._update_rect)
 
