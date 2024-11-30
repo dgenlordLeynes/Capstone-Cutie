@@ -345,8 +345,35 @@ class SecondScreen(Screen):
         radius=[15, 15, 15, 15]  # Rounded corners
         )
         layout.add_widget(self.text_input2)
-        
+
+          # Translate Button
+        translate_button = RoundedButton(
+            text='Translate',
+            size_hint=(0.2, 0.05),
+            font_size='12sp',
+            pos_hint={'center_x': 0.5, 'center_y': 0.17},
+            background_color=(0.2, 0.6, 0.8, 1),  
+            radius=[15]  
+        )
+        translate_button.bind(on_press=self.on_translate)
+        layout.add_widget(translate_button)
+
+        # Add the main layout to the screen
         self.add_widget(layout)
+
+    # Handling the Translate Button's Logic
+    def on_translate(self, instance):  
+        source_text = self.text_input1.text.strip()
+        if not source_text:
+            self.text_input2.text = "Please enter some text to translate!"
+        else:
+            # Replace with actual translation logic
+            translated_text = f"Translated: {source_text}"
+            self.text_input2.text = translated_text
+
+    def _update_rect(self, instance, value):
+        self.rect.pos = self.pos
+        self.rect.size = self.size
 
     def go_to_main_screen(self, instance):
         self.manager.current = 'main'
