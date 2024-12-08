@@ -32,41 +32,6 @@ class RoundedButton(Button):
     def update_rect(self, *args):
         self.rect.pos = self.pos
         self.rect.size = self.size
-
-class RoundedTextInput(TextInput):
-    # Properties for the radius of rounded corners and background color
-    radius = ListProperty([10, 10, 10, 10])  
-    background_color = ListProperty([1, 1, 1, 1])  
-    def __init__(self, **kwargs):
-        super(RoundedTextInput, self).__init__(**kwargs)
-        self.bind(size=self.update_canvas, pos=self.update_canvas)
-        
-    def update_canvas(self, *args):
-        # Clear the previous canvas drawing before rendering a new one
-        self.canvas.before.clear()
-        
-        with self.canvas.before:
-            from kivy.graphics import Color
-            Color(*self.background_color) 
-            # Draw the rounded rectangle based on the size and position of the TextInput
-            self.rounded_rect = RoundedRectangle(
-                size=self.size, 
-                pos=self.pos, 
-                radius=self.radius
-            )
-
-    def on_focus(self, instance, value):
-        # Update the canvas when the input is focused or unfocused
-        self.update_canvas()
-
-    def on_focus(self, instance, value):
-        # Redraw the background when the input is focused or unfocused
-        self.update_canvas()
-
-    def on_text(self, instance, value):
-        # Trigger canvas update when text is entered or removed
-        self.update_canvas()
-
 class CustomRoundedButton(Button):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -322,29 +287,30 @@ class SecondScreen(Screen):
         layout.add_widget(bottom_button_layout)
 
       # Text input 1
-        self.text_input1 = RoundedTextInput(
-        hint_text='Enter your text here...',  # Hint text will be visible now
-        size_hint=(0.8, 0.2),
-        font_name='assets/fonts/Poppins-Regular.ttf',
-        pos_hint={'center_x': 0.5, 'center_y': 0.57},
-        multiline=False,
-        background_color=(1, 1, 1, 1),  # White background for the text input
-        radius=[15, 15, 15, 15]  # Rounded corners
+        self.text_input1 = TextInput(
+            hint_text='Enter your text here...',  # Standard hint text (only visible in KivyMD or with custom behavior)
+            size_hint=(0.8, 0.2),
+            pos_hint={'center_x': 0.5, 'center_y': 0.57},
+            multiline=False,  # Single-line input
+            background_color=(1, 1, 1, 1),  # White background for the text input
+            foreground_color=(0, 0, 0, 1),  # Black text color
+            font_name='assets/fonts/Poppins-Regular.ttf'  # Optional, use default system font if not available
         )
         layout.add_widget(self.text_input1)
 
 # Text input 2
-        self.text_input2 = RoundedTextInput(
-        hint_text='Your input will be here...',  # Hint text will be visible now
-        size_hint=(0.8, 0.2),
-        font_name='assets/fonts/Poppins-Regular.ttf',
-        pos_hint={'center_x': 0.5, 'center_y': 0.33},
-        multiline=True,
-        readonly=True,
-        background_color=(1, 1, 1, 1),  # White background
-        radius=[15, 15, 15, 15]  # Rounded corners
+        self.text_input2 = TextInput(
+            hint_text='Your input will be here...',  # Standard hint text
+            size_hint=(0.8, 0.2),
+            pos_hint={'center_x': 0.5, 'center_y': 0.33},
+            multiline=True,  # Multi-line input
+            readonly=True,  # Makes the text input read-only
+            background_color=(1, 1, 1, 1),  # White background
+            foreground_color=(0, 0, 0, 1),  # Black text color
+            font_name='assets/fonts/Poppins-Regular.ttf'  # Optional
         )
         layout.add_widget(self.text_input2)
+
 
           # Translate Button
         translate_button = RoundedButton(
@@ -711,43 +677,53 @@ class FifthScreen(Screen):
     def __init__(self, **kwargs):
         super(FifthScreen, self).__init__(**kwargs)
 
-        # Set background color first to ensure it is at the base layer
+        # Set yellow background as the base layer
         with self.canvas.before:
-            Color(0.976, 0.875, 0.427, 1)  
+            Color(0.976, 0.875, 0.427, 1)  # Yellow background color
             self.bg_rect = Rectangle(size=self.size, pos=self.pos)
+
+            # White circle (background image)
+            try:
+                self.bg_image = CoreImage('assets/images/white circle.png').texture
+                Color(1, 1, 1, 1)  # Reset to white (for clarity)
+                self.bg_image_rect = Rectangle(texture=self.bg_image, size=self.size, pos=self.pos)
+            except Exception as e:
+                print(f"Error loading background image: {e}")
+                self.bg_image_rect = None
+
+            # White rectangle for the `magayon` label
+            Color(1, 1, 1, 1)  # White color
+            self.word_bg_rect = RoundedRectangle(size=(200, 80), pos=(self.center_x - 100, self.height * 0.65))
+
+        # Bind size and position updates for background
         self.bind(size=self._update_rect, pos=self._update_rect)
 
-        # Attempt to load the background image
-        try:
-            self.bg_image = CoreImage('assets/images/white circle.png').texture
-        except Exception as e:
-            print(f"Error loading background image: {e}")
-            self.bg_image = None  # Fallback in case of error
-        
-        # If image is available, add it on top of the yellow background
-        if self.bg_image:
-            with self.canvas.before:
-                Color(1, 1, 1, 1)  
-                self.bg_image_rect = Rectangle(texture=self.bg_image, size=self.size, pos=self.pos)
-            self.bind(size=self._update_rect, pos=self._update_rect)
-
-        # Main layout using FloatLayout
+        # Main layout
         self.layout = FloatLayout()
         self.add_widget(self.layout)
 
-        # Top bar with progress and score
+        # --- Top bar with progress and score ---
         top_bar = BoxLayout(orientation='horizontal', size_hint=(1, 0.1), pos_hint={'top': 1})
 
         # Back button
-        back_button = RoundedButton(text='Back', size_hint=(None, None), size=(100, 50),
-                                     pos_hint={'x': 0.05, 'top': 0.15}, font_size='20sp', background_normal='', background_color=(0.2, 0.2, 0.2, 0.5))
+        back_button = RoundedButton(
+            text='Back', size_hint=(None, None), size=(100, 50),
+            pos_hint={'x': 1000, 'top': 0.15}, font_size='20sp',
+            background_normal='', background_color=(0.2, 0.2, 0.2, 0.5)
+        )
         back_button.bind(on_press=self.go_back)
 
         # Progress label
-        self.progress = Label(text='2/10', font_size='20sp', color=(0, 0, 0, 1), pos_hint={'center_x': 0.5, 'top': 0.3})
+        self.progress = Label(
+            text='2/10', font_size='20sp', color=(0, 0, 0, 1),
+            pos_hint={'center_x': 0.5, 'top': 0.3}
+        )
 
         # Score layout
-        self.score_layout = BoxLayout(orientation='vertical', size_hint=(None, None), size=(100, 60), pos_hint={'right': 1, 'top': 0.25})
+        self.score_layout = BoxLayout(
+            orientation='vertical', size_hint=(None, None), size=(100, 60),
+            pos_hint={'right': 1, 'top': 0.25}
+        )
         self.score_text = Label(text='Score:', font_size='12sp', color=(0, 0, 0, 1), size_hint=(1, None), height=20)
         self.score_value = Label(text='87', font_size='24sp', color=(0, 0, 0, 1), size_hint=(1, None), height=40)
         self.score_layout.add_widget(self.score_text)
@@ -759,63 +735,158 @@ class FifthScreen(Screen):
         top_bar.add_widget(self.score_layout)
         self.layout.add_widget(top_bar)
 
-        # Initialize score_background rectangle (for the background of the score layout)
-        with self.canvas.before:
-            self.score_background = Rectangle(size=self.score_layout.size, pos=self.score_layout.pos)
-
-        # Word label (restored to original rounded rectangle background)
-        self.word_label = Label(text='magayon', font_size='30sp', color=(0.2, 0.2, 0.2, 1),
-                                size_hint=(None, None), size=(200, 80), halign='center', valign='middle')
+        # --- Word Label ---
+        self.word_label = Label(
+            text='magayon', font_size='30sp', color=(0.2, 0.2, 0.2, 1),
+            size_hint=(None, None), size=(200, 80), halign='center', valign='middle'
+        )
         self.word_label.bind(size=self.word_label.setter('text_size'))
         self.word_label.pos_hint = {'center_x': 0.5, 'center_y': 0.70}
         self.layout.add_widget(self.word_label)
 
-        # Rounded rectangle background for the word label
-        with self.canvas.before:
-            Color(1, 1, 1, 1)  # Slightly translucent background color for the word label
-            self.word_background = RoundedRectangle(size=(self.word_label.width + 40, self.word_label.height + 40),
-                                                    pos=(self.word_label.x - 20, self.word_label.y - 20),
-                                                    radius=[15])
-        
-        self.bind(size=self.update_word_background, pos=self.update_word_background)
-
-        # Answer choices (example with dummy options)
-        self.answer_layout = BoxLayout(orientation='vertical', size_hint=(0.8, None), height=150, spacing=10, pos_hint={'center_x': 0.5, 'center_y': 0.4})
+        # --- Answer Choices ---
+        self.answer_layout = BoxLayout(
+            orientation='vertical', size_hint=(0.8, None), height=150, spacing=10,
+            pos_hint={'center_x': 0.5, 'center_y': 0.4}
+        )
         answer_texts = ['magaling', 'masama', 'maganda']
         for text in answer_texts:
-            answer_button = RoundedButton(text=text, font_size='20sp', background_normal='', background_color=(1, 1, 1, 1), 
-                                          color=(0.2, 0.2, 0.2, 1), size_hint_y=None, height=40, radius=[10])
+            answer_button = RoundedButton(
+                text=text, font_size='20sp', background_normal='', background_color=(1, 1, 1, 1),
+                color=(0.2, 0.2, 0.2, 1), size_hint_y=None, height=40, radius=[10]
+            )
             self.answer_layout.add_widget(answer_button)
         self.layout.add_widget(self.answer_layout)
 
-        # Done button
-        self.done_button = RoundedButton(text='Done', size_hint=(None, None), size=(300, 40), pos_hint={'center_x': 0.5, 'y': 0.1},
-                                         font_size='18sp', background_normal='', background_color=(0.2, 0.2, 0.2, 1))
+        # --- Done Button ---
+        self.done_button = RoundedButton(
+            text='Done', size_hint=(None, None), size=(300, 40), pos_hint={'center_x': 0.5, 'y': 0.1},
+            font_size='18sp', background_normal='', background_color=(0.2, 0.2, 0.2, 1)
+        )
+        self.done_button.bind(on_press=self.go_to_end_challenge)
         self.layout.add_widget(self.done_button)
 
+    # --- Transition to End Challenge ---
+    def go_to_end_challenge(self, instance):
+        end_screen = self.manager.get_screen('end_challenge')
+        end_screen.score_label.text = f"Your score: {self.score_value.text}"  # Pass score dynamically
+        self.manager.current = 'end_challenge'
+
+    # --- Back Navigation ---
     def go_back(self, instance):
         self.manager.current = 'fourth'
 
+    # --- Update Background Rectangles ---
     def _update_rect(self, instance, value):
-        # Update background rectangle
-        if self.bg_rect:
-            self.bg_rect.pos = self.pos
+    # Update yellow background rectangle
+        if hasattr(self, 'bg_rect'):
             self.bg_rect.size = self.size
-        if self.bg_image_rect:
-            self.bg_image_rect.pos = self.pos
-            self.bg_image_rect.size = self.size
+            self.bg_rect.pos = self.pos
 
-    def update_word_background(self, *args):
-        # Update the word background rectangle with the new size and position
-        if self.word_background:
-            self.word_background.size = (self.word_label.width + 40, self.word_label.height + 40)
-            self.word_background.pos = (self.word_label.x - 20, self.word_label.y - 20)
+    # Update the background image rectangle (white circle)
+        if hasattr(self, 'bg_image_rect') and self.bg_image_rect:
+        # Increase the size of the circle to cover more area
+            circle_scale = 1  # Increase the scale factor to make the circle larger
+            self.bg_image_rect.size = (self.width * circle_scale, self.height * circle_scale)
+            self.bg_image_rect.pos = (
+            self.center_x - self.bg_image_rect.size[0] / 2,  # Center horizontally
+            self.center_y - self.bg_image_rect.size[1] / 2  # Center vertically (adjust if necessary)
+        )
 
-    def update_score_background(self, *args):
-        # Update the score layout background
-        if hasattr(self, 'score_background'):
-            self.score_background.size = self.score_layout.size
-            self.score_background.pos = self.score_layout.pos
+    # Update the word label's background rectangle
+        if hasattr(self, 'word_bg_rect'):
+            self.word_bg_rect.size = (self.word_label.width + 20, self.word_label.height + 20)
+            self.word_bg_rect.pos = (self.word_label.x - 10, self.word_label.y - 10)
+
+class EndChallengeScreen(Screen):
+    def __init__(self, **kwargs):
+        super(EndChallengeScreen, self).__init__(**kwargs)
+
+        self.bg_scale_factor = 2 
+
+        # Background setup with image (Philippines map)
+        with self.canvas.before:
+            Color(0.976, 0.875, 0.427, 1)  # Light yellow background
+            self.bg_rect = Rectangle(size=self.size, pos=self.pos)
+            
+            # Load the background map image
+            Color(1, 1, 1, 0.25)  
+            self.bg_image = CoreImage('assets/images/philippines map.png')
+            self.bg_width, self.bg_height = self.bg_image.size
+            
+            self.bg_map = Rectangle(
+                source='assets/images/philippines map.png',
+                size=self.size,
+                pos=self.pos
+            )
+
+        self.bind(size=self._update_rect, pos=self._update_rect)
+
+        # Main layout for the screen
+        layout = FloatLayout()
+        self.add_widget(layout)
+
+        # Title text for "Dialect Challenge"
+        title = Label(
+            text='Dialect Challenge',
+            font_size='40sp',
+            pos_hint={'center_x': 0.5, 'top': 1.2},  # Position it above
+            color=(0.2, 0.2, 0.2, 1),
+            font_name='assets/fonts/Poppins-ExtraBold.ttf'
+        )
+        layout.add_widget(title)
+
+        # Score label
+        self.score_label = Label(
+            text="Your score: 0",  # Placeholder, update with actual score
+            font_size='30sp',
+            color=(0.2, 0.2, 0.2, 1),
+            size_hint=(None, None),
+            size=(300, 100),
+            pos_hint={'center_x': 0.5, 'center_y': 0.6}
+        )
+        layout.add_widget(self.score_label)
+
+        # Start New Game button
+        self.new_game_button = RoundedButton(
+            text='Start New Game',
+            font_size='18sp',
+            size_hint=(None, None),
+            size=(300, 50),
+            pos_hint={'center_x': 0.5, 'center_y': 0.1},
+            background_color=(0.2, 0.2, 0.2, 1),
+            font_name='assets/fonts/Poppins-Regular.ttf'
+        )
+        self.new_game_button.bind(on_press=self.start_new_game)
+        layout.add_widget(self.new_game_button)
+
+        # Share button
+        self.share_button = RoundedButton(
+            text='Share',
+            font_size='18sp',
+            size_hint=(None, None),
+            size=(150, 50),
+            pos_hint={'center_x': 0.5, 'center_y': 0.3},
+            background_color=(0.2, 0.2, 0.2, 1),
+            font_name='assets/fonts/Poppins-Regular.ttf'
+        )
+        self.share_button.bind(on_press=self.share_score)
+        layout.add_widget(self.share_button)
+
+    def start_new_game(self, instance):
+        self.manager.current = 'fourth'  # Navigate to the 'fourth' screen
+
+    def share_score(self, instance):
+        print("Score shared!")  # Replace with actual share logic
+
+    def _update_rect(self, instance, value):
+        if hasattr(self, 'bg_rect'):
+            self.bg_rect.size = self.size
+            self.bg_rect.pos = self.pos
+            self.bg_map.size = self.size
+            self.bg_map.pos = self.pos
+
+
 
 class MyApp(App):
     def build(self):
@@ -825,6 +896,7 @@ class MyApp(App):
         sm.add_widget(ThirdScreen(name='third'))
         sm.add_widget(FourthScreen(name='fourth'))
         sm.add_widget(FifthScreen(name='fifth'))
+        sm.add_widget(EndChallengeScreen(name='end_challenge'))
         return sm
 
 
