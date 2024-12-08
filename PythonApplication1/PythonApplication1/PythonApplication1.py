@@ -302,7 +302,7 @@ class SecondScreen(Screen):
         square_button2 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
-            pos_hint={'center_x': 0.5, 'center_y': 0.6},
+            pos_hint={'center_x': 0.5, 'center_y': 0.3},
             background_color=(0.2, 0.2, 0.2, 1),
             radius=[100]
         )
@@ -525,7 +525,7 @@ class ThirdScreen(Screen):
         square_button3 = RoundedButton(
         size_hint=(None, None),
         size=(50, 50),
-        pos_hint={'center_x': 0.75, 'center_y': 0.6},
+        pos_hint={'center_x': 0.75, 'center_y': 0.3},
         background_color=(0.2, 0.2, 0.2, 1),
         radius=[100]
         )
@@ -639,7 +639,7 @@ class FourthScreen(Screen):
         square_button1 = RoundedButton(
             size_hint=(None, None),
             size=(50, 50),
-            pos_hint={'center_x': 0.25, 'center_y': 0.6},
+            pos_hint={'center_x': 0.25, 'center_y': 0.3},
             background_color=(0.2, 0.2, 0.2, 1),
             radius=[100]
         )
